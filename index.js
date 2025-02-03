@@ -154,8 +154,8 @@ async function run() {
         image,
         category,
         title,
-        short_discription,
-        long_discription,
+        short_description,
+        long_description,
         word_count,
         author_email,
       } = req.body;
@@ -168,13 +168,14 @@ async function run() {
 
       const objectId = new ObjectId(_id);
       const query = { _id: objectId };
+
       const update = {
         $set: {
           image,
           category,
           title,
-          short_discription,
-          long_discription,
+          short_description,
+          long_description,
           word_count,
         },
       };

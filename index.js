@@ -118,14 +118,10 @@ async function run() {
     });
 
     app.get("/blogs", (req, res) => {
-      let { query, limit, projection, sort } = req.query;
+      let { query={},skip="0", limit="0", sort={} } = req.query;
       // console.log(req.query)
       blogs
-        .find(query)
-        .limit(Number(limit))
-        .project(projection)
-        .sort(sort)
-        .toArray()
+      .find(query).skip(Number(skip)).limit(Number(limit)).sort(sort).toArray()
         .then((result) => {
           res.status(200).send(result);
         })
@@ -136,10 +132,10 @@ async function run() {
     });
 
     app.get("/myBlogs", (req, res) => {
-      let { author_email, sort } = req.query;
+      let { query={},skip="0", limit="0", sort={} } = req.query;
 
       blogs
-        .find({author_email})
+        .find(query)
         .sort(sort)
         .toArray()
         .then((result) => {
@@ -149,6 +145,18 @@ async function run() {
           console.error(`Failed to find any blogs with the author email: ${author_email}: ${error}`);
           res.status(500).send(`Failed to find any blogs with the author email: ${author_email}.`);
         });
+    });
+
+    app.get("/blog-count", async (req, res) => {
+      let { query={} } = req.query;
+
+      try {
+        const result =await blogs.countDocuments(query)
+        res.status(200).json(result)
+      } catch (error) {
+        console.error(`Failed to count blogs: ${error}`);
+        res.status(500).send("Failed to count blogs.");
+      }
     });
 
     app.get("/blog/:_id", (req, res) => {

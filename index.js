@@ -135,6 +135,22 @@ async function run() {
         });
     });
 
+    app.get("/myBlogs", (req, res) => {
+      let { author_email, sort } = req.query;
+
+      blogs
+        .find({author_email})
+        .sort(sort)
+        .toArray()
+        .then((result) => {
+          res.status(200).json(result);
+        })
+        .catch((error) => {
+          console.error(`Failed to find any blogs with the author email: ${author_email}: ${error}`);
+          res.status(500).send(`Failed to find any blogs with the author email: ${author_email}.`);
+        });
+    });
+
     app.get("/blog/:_id", (req, res) => {
       let _id = new ObjectId(req.params._id);
       blogs
@@ -253,7 +269,7 @@ async function run() {
     app.get("/Wishlist", verify, (req, res) => {
       let { query, sort } = req.query;
 
-      if (req.user.email !== query.user_email) {
+      if (req.user.email !== query?.user_email) {
         return res
           .status(403)
           .send({ message: "Forbidden Access, email don't match!" });

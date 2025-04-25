@@ -219,6 +219,20 @@ async function run() {
         });
     });
 
+    app.delete("/deleteBlog/:_id", (req, res) => {
+      let _id = new ObjectId(req.params._id);
+      blogs
+        .deleteOne({ _id })
+        .then((result) => {
+          console.log(`${result.deletedCount} blog has been deleted.`);
+          res.status(200).json(result);
+        })
+        .catch((error) => {
+          console.error(`Failed to delete Blog: ${error}`);
+          res.status(500).send("Failed to delete Blog.");
+        });
+    });
+
 
     // Comments
 
